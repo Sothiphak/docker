@@ -2,7 +2,8 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Role;
+use Laravel\Passport\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -11,7 +12,7 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
-
+    use HasApiTokens, HasFactory, Notifiable;
     /**
      * The attributes that are mass assignable.
      *
@@ -47,5 +48,16 @@ class User extends Authenticatable
     }
     public function roles() {
         return $this->belongsToMany(Role::class);
+    }
+    // Check if user has a specific role (e.g., $user->hasRole('admin'))
+    public function hasRole(string $role): bool {
+        return $this->roles()->where('name', $role)->exists();
+    }
+
+    // Check if user has a specific permission via their role
+    public function hasPermission(string $permission): bool {
+        return $this->roles()
+            ->whereHas('permissions', fn($q) => $q->where('name', $permission))
+            ->exists();
     }
 }
