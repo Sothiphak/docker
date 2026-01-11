@@ -18,9 +18,15 @@ class AuthorController extends Controller
         ]);
 
         $author = $user->author()->create([
-            'name' => $request->name 
+            'name' => $request->name
         ]);
 
         return response()->json(['message' => 'Author created', 'data' => $author], 201);
+    }
+
+    public function getAudiences($name)
+    {
+        $author = Author::where('name', $name)->firstOrFail();
+        return response()->json($author->audiences);
     }
 }

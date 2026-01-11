@@ -2,9 +2,13 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\AuthorController;
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\AudienceController;
+use App\Http\Controllers\CommentController;
 
 // --- LOGIN ROUTE (Public) ---
 Route::post('/login', function (Request $request) {
@@ -55,3 +59,16 @@ Route::controller(ProductController::class)->prefix('products')->group(function 
 
 // Nested Route
 Route::get('/categories/{categoryId}/products', [ProductController::class, 'getProductsByCategory']);
+
+
+Route::post('/authors', [AuthorController::class, 'store']);
+Route::post('/articles', [ArticleController::class, 'store']);
+Route::post('/audience-users', [AudienceController::class, 'createUser']);
+Route::post('/subscribe', [AudienceController::class, 'subscribe']);
+Route::post('/comments', [CommentController::class, 'store']);
+
+Route::get('/authors/{name}/articles', [ArticleController::class, 'getByAuthor']);
+Route::get('/articles/{name}/audiences', [AudienceController::class, 'getByArticle']);
+Route::get('/authors/{name}/audiences', [AuthorController::class, 'getAudiences']);
+Route::get('/audiences/{name}/comments', [CommentController::class, 'getByAudienceName']);
+Route::get('/comments', [CommentController::class, 'getAllWithTopic']);

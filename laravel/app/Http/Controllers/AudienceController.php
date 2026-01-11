@@ -35,4 +35,15 @@ class AudienceController extends Controller
 
         return response()->json(['message' => "Subscribed to {$article->name}"], 201);
     }
+
+    public function getByArticle(Request $request)
+    {
+        $articleName = urldecode($request->route('name'));
+
+        $audiences = Audience::whereHas('article', function ($query) use ($articleName) {
+            $query->where('name', $articleName);
+        })->with('user')->get();
+
+        return response()->json($audiences);
+    }
 }
